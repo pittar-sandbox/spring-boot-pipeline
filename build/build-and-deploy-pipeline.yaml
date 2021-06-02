@@ -59,3 +59,12 @@ spec:
           workspace: build-workspace
       runAfter:
         - mvn-build
+    - name: deploy-app
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      runAfter:
+        - build-image
+      params:
+        - name: SCRIPT
+          value: oc rollout restart deployment/petclinic -n $(params.namespace)
