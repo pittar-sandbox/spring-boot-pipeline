@@ -12,6 +12,8 @@ spec:
       value: master
     - name: namespace
       value: springboot
+    - name: app-name
+      value: petclinic
   workspaces:
     - name: build-workspace
       persistentVolumeClaim:
