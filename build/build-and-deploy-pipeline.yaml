@@ -1,0 +1,63 @@
+kind: Pipeline
+apiVersion: tekton.dev/v1beta1
+metadata:
+  name: build-and-deploy
+spec:
+  workspaces:
+    - name: build-workspace
+    - name: maven-settings
+  params:
+    - name: git-repo-url
+      type: string
+      default: http://github.com/pittar/spring-petclinic.git
+    - name: git-repo-revision
+      type: string
+      default: master
+    - name: git-repo-name
+      type: string
+      default: spring-petclinic
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: build-workspace
+      params:
+        - name: url
+          value: "$(params.git-repo-url)"
+        - name: revision
+          value: "$(params.git-repo-revision)"
+        - name: deleteExisting
+          value: "true"
+    - name: mvn-build
+      taskRef:
+        name: maven
+        kind: ClusterTask
+      runAfter:
+        - git-clone 
+      params:
+        - name: GOALS
+          value:
+            - clean
+            - package
+      workspaces:
+        - name: source
+          workspace: build-workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: build-image
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      params:
+        - name: IMAGE
+          value: image-registry.openshift-image-registry.svc:5000/springboot/petclinic:latest
+        - name: DOCKERFILE
+          value: ./Containerfile
+      workspaces:
+        - name: source
+          workspace: build-workspace
+      runAfter:
+        - mvn-build
