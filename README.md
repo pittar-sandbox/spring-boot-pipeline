@@ -25,7 +25,7 @@ oc apply -f app
 5. Run the pipeline.
 
 ```
-oc create -f run/run-build.yaml
+oc create -f run/run-build.yaml -n springboot
 ```
 
 
