@@ -14,7 +14,7 @@ spec:
       default: master
     - name: namespace
       type: string
-    - param: app-name
+    - name: app-name
       type: string
   tasks:
     - name: git-clone
