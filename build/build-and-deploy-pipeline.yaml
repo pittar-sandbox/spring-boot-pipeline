@@ -9,13 +9,11 @@ spec:
   params:
     - name: git-repo-url
       type: string
-      default: http://github.com/pittar/spring-petclinic.git
     - name: git-repo-revision
       type: string
       default: master
     - name: namespace
       type: string
-      default: springboot
   tasks:
     - name: git-clone
       taskRef:
@@ -53,7 +51,7 @@ spec:
         kind: ClusterTask
       params:
         - name: IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/$(params.git-repo-revision)/petclinic:latest
+          value: image-registry.openshift-image-registry.svc:5000/$(params.namespace)/petclinic:latest
         - name: DOCKERFILE
           value: ./Containerfile
       workspaces:
